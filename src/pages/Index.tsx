@@ -25,9 +25,9 @@ const Index = () => {
       <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="container max-w-6xl flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
-            <CalendarDays className="h-7 w-7 text-primary" />
+            <img src="/logo.png" alt="BKKhan Waitlist" className="h-10 w-10 rounded" />
             <div>
-              <h1 className="text-xl font-display font-bold text-foreground leading-tight">Reservations</h1>
+              <h1 className="text-xl font-display font-bold text-foreground leading-tight">BKKhan Waitlist</h1>
               <p className="text-xs text-muted-foreground font-body">Restaurant Booking Calendar</p>
             </div>
           </div>
