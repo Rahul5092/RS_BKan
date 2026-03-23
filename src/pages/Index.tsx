@@ -84,11 +84,11 @@ const Index = () => {
         open={formOpen}
         onOpenChange={(open) => { setFormOpen(open); if (!open) setEditingReservation(null); }}
         editingReservation={editingReservation}
-        onSubmit={(data) => {
+        onSubmit={async (data) => {
           if (editingReservation) {
-            updateReservation(editingReservation.id, data);
+            return updateReservation(editingReservation.id, data);
           } else {
-            addReservation(data);
+            return addReservation(data);
           }
         }}
       />

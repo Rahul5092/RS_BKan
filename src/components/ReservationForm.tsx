@@ -31,7 +31,7 @@ interface ReservationFormProps {
     partySize: number;
     status: "confirmed" | "waitlist";
     notes: string;
-  }) => void;
+  }) => Promise<boolean> | boolean;
   editingReservation?: Reservation | null;
 }
 
@@ -71,11 +71,11 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
     onOpenChange(isOpen);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName.trim() || !phone.trim()) return;
 
-    onSubmit({
+    const ok = await onSubmit({
       date: format(date, "yyyy-MM-dd"),
       customerName: customerName.trim(),
       phone: phone.trim(),
@@ -84,8 +84,12 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
       notes: notes.trim(),
     });
 
-    resetForm();
-    onOpenChange(false);
+    if (ok) {
+      resetForm();
+      onOpenChange(false);
+    } else {
+      alert("Failed to save reservation. Please check Supabase table columns and RLS policies.");
+    }
   };
 
   const isEditing = !!editingReservation;
