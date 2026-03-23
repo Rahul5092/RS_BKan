@@ -1,31 +1,42 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { Reservation } from "@/types/reservation";
 
-const STORAGE_KEY = "restaurant-reservations";
-
-function loadReservations(): Reservation[] {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
+const RESERVATIONS_STORAGE_KEY = "reservations";
 
 export function useReservations() {
-  const [reservations, setReservations] = useState<Reservation[]>(loadReservations);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+
+  const fetchReservations = () => {
+    try {
+      const raw = localStorage.getItem(RESERVATIONS_STORAGE_KEY);
+      const parsed = raw ? (JSON.parse(raw) as Reservation[]) : [];
+      setReservations(parsed.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+    } catch (error) {
+      console.error("Failed to load reservations", error);
+      setReservations([]);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(reservations));
+    fetchReservations();
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(RESERVATIONS_STORAGE_KEY, JSON.stringify(reservations));
+    } catch (error) {
+      console.error("Failed to persist reservations", error);
+    }
   }, [reservations]);
 
   const addReservation = (reservation: Omit<Reservation, "id" | "createdAt">) => {
-    const newReservation: Reservation = {
-      ...reservation,
+    const payload: Reservation = {
       id: crypto.randomUUID(),
+      ...reservation,
+      status: reservation.status ?? "waitlist",
       createdAt: new Date().toISOString(),
     };
-    setReservations((prev) => [...prev, newReservation]);
+    setReservations((prev) => [payload, ...prev]);
   };
 
   const deleteReservation = (id: string) => {
@@ -33,9 +44,7 @@ export function useReservations() {
   };
 
   const updateReservation = (id: string, updates: Partial<Omit<Reservation, "id" | "createdAt">>) => {
-    setReservations((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, ...updates } : r))
-    );
+    setReservations((prev) => prev.map((item) => (item.id === id ? { ...item, ...updates } : item)));
   };
 
   const getReservationsForDate = (date: string) => {
@@ -44,3 +53,4 @@ export function useReservations() {
 
   return { reservations, addReservation, deleteReservation, updateReservation, getReservationsForDate };
 }
+
