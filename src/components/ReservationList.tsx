@@ -61,6 +61,9 @@ export function ReservationList({ date, reservations, onDelete, onEdit, onToggle
                       {r.status === "confirmed" ? "Confirmed" : "Waitlist"}
                     </Badge>
                   </div>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    {r.date ? `Reservation date: ${format(new Date(r.date), "MMM d, yyyy")}` : "No date set"}
+                  </p>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Phone className="h-3.5 w-3.5" />
