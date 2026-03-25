@@ -12,6 +12,8 @@ type ReservationRecord = {
   partysize?: number;
   status: "confirmed" | "waitlist";
   notes: string | null;
+  time?: string | null;
+  server?: string | null;
   createdAt?: string;
   createdat?: string;
 };
@@ -24,6 +26,8 @@ const toReservation = (row: ReservationRecord): Reservation => ({
   partySize: row.partySize ?? row.partysize ?? 0,
   status: row.status,
   notes: row.notes ?? "",
+  time: row.time ?? undefined,
+  server: row.server ?? undefined,
   createdAt: row.createdAt ?? row.createdat ?? new Date().toISOString(),
 });
 
@@ -59,6 +63,8 @@ export function useReservations() {
   const addReservation = async (reservation: Omit<Reservation, "id" | "createdAt">): Promise<boolean> => {
     const camelPayload = {
       ...reservation,
+      time: reservation.time,
+      server: reservation.server,
       status: reservation.status ?? "waitlist",
       createdAt: new Date().toISOString(),
     };
@@ -69,6 +75,8 @@ export function useReservations() {
       partysize: reservation.partySize,
       status: reservation.status ?? "waitlist",
       notes: reservation.notes,
+      time: reservation.time,
+      server: reservation.server,
       createdat: new Date().toISOString(),
     };
 
@@ -117,6 +125,8 @@ export function useReservations() {
       ...(updates.partySize !== undefined ? { partysize: updates.partySize } : {}),
       ...(updates.status !== undefined ? { status: updates.status } : {}),
       ...(updates.notes !== undefined ? { notes: updates.notes } : {}),
+      ...(updates.time !== undefined ? { time: updates.time } : {}),
+      ...(updates.server !== undefined ? { server: updates.server } : {}),
     };
 
     let { data, error } = await supabase.from("reservations").update(camelUpdates).eq("id", id).select();

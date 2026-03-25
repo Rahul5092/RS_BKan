@@ -12,6 +12,7 @@ import {
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Reservation } from "@/types/reservation";
+import { getHolidayForDate, isLongWeekend } from "@/lib/holidays";
 
 interface CalendarGridProps {
   currentMonth: Date;
@@ -54,40 +55,44 @@ export function CalendarGrid({ currentMonth, selectedDate, onSelectDate, reserva
           const inMonth = isSameMonth(day, currentMonth);
           const today = isToday(day);
           const selected = isSameDay(day, selectedDate);
+          const holiday = getHolidayForDate(day);
+          const longWeekend = isLongWeekend(day);
 
           return (
             <button
               key={dateKey}
               onClick={() => onSelectDate(day)}
               className={cn(
-                "relative flex flex-col items-center justify-start p-1.5 min-h-[72px] rounded-md transition-all text-sm font-body",
+                "relative flex flex-col items-center justify-start p-1.5 min-h-[72px] rounded-md transition-all text-sm font-body overflow-hidden",
                 !inMonth && "opacity-30",
                 inMonth && "hover:bg-secondary cursor-pointer",
+                longWeekend && inMonth && !selected && "bg-blue-50/50 hover:bg-blue-100/50 dark:bg-blue-950/20 dark:hover:bg-blue-900/40",
                 today && !selected && "ring-1 ring-accent",
                 selected && "bg-primary text-primary-foreground hover:bg-primary/90"
               )}
             >
-              <span className={cn("font-medium text-sm", selected && "text-primary-foreground")}>
+              <span className={cn("font-medium text-sm", selected && "text-primary-foreground", holiday && !selected && "text-destructive font-bold")}>
                 {format(day, "d")}
               </span>
-              {counts && (
-                <div className="flex gap-0.5 mt-1 flex-wrap justify-center">
-                  {counts.confirmed > 0 && (
-                    <span className={cn(
-                      "text-[10px] px-1 rounded-sm font-medium",
-                      selected ? "bg-primary-foreground/20 text-primary-foreground" : "bg-success/15 text-success"
-                    )}>
-                      {counts.confirmed}
-                    </span>
-                  )}
-                  {counts.waitlist > 0 && (
-                    <span className={cn(
-                      "text-[10px] px-1 rounded-sm font-medium",
-                      selected ? "bg-primary-foreground/20 text-primary-foreground" : "bg-warning/20 text-warning"
-                    )}>
-                      {counts.waitlist}
-                    </span>
-                  )}
+              {holiday && (
+                <span 
+                  className={cn(
+                    "text-[8px] leading-tight text-center mt-0.5 line-clamp-2 px-0.5 w-full",
+                    selected ? "text-primary-foreground/90 font-medium" : "text-destructive/90 font-semibold"
+                  )} 
+                  title={holiday.name}
+                >
+                  {holiday.name}
+                </span>
+              )}
+              {counts && (counts.confirmed > 0 || counts.waitlist > 0) && (
+                <div className="flex mt-1 justify-center">
+                  <span className={cn(
+                    "text-[10px] px-1.5 rounded-full font-bold min-w-[18px] text-center",
+                    selected ? "bg-primary-foreground text-primary" : "bg-primary text-primary-foreground"
+                  )}>
+                    {counts.confirmed + counts.waitlist}
+                  </span>
                 </div>
               )}
             </button>

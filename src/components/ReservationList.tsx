@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import type { Reservation } from "@/types/reservation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone, Users, Trash2, MessageSquare, Pencil } from "lucide-react";
+import { Phone, Users, Trash2, MessageSquare, Pencil, Clock, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ReservationListProps {
@@ -64,7 +64,7 @@ export function ReservationList({ date, reservations, onDelete, onEdit, onToggle
                   <p className="text-xs text-muted-foreground mb-1">
                     {r.date ? `Reservation date: ${format(new Date(r.date), "MMM d, yyyy")}` : "No date set"}
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
                     <span className="flex items-center gap-1">
                       <Phone className="h-3.5 w-3.5" />
                       {r.phone}
@@ -73,6 +73,18 @@ export function ReservationList({ date, reservations, onDelete, onEdit, onToggle
                       <Users className="h-3.5 w-3.5" />
                       {r.partySize} {r.partySize === 1 ? "guest" : "guests"}
                     </span>
+                    {r.time && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" />
+                        {r.time}
+                      </span>
+                    )}
+                    {r.server && r.server !== "none" && (
+                      <span className="flex items-center gap-1 capitalize">
+                        <UserRound className="h-3.5 w-3.5" />
+                        {r.server}
+                      </span>
+                    )}
                   </div>
                   {r.notes && (
                     <p className="mt-2 text-sm text-muted-foreground flex items-start gap-1.5">

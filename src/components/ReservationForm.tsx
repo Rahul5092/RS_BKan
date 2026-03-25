@@ -20,12 +20,27 @@ import {
 import { UserPlus, Pencil } from "lucide-react";
 import type { Reservation } from "@/types/reservation";
 
+const SERVERS = [
+  "arsalan ali", "fahad", "Razak", "sunny", "nanu", "Lana", 
+  "Riti", "saho", "aanchal", "Tasmin", "Sonia", "Angela", "Grisha"
+];
+
+const TIME_SLOTS = Array.from({ length: 48 }).map((_, i) => {
+  const hour = Math.floor(i / 2);
+  const min = i % 2 === 0 ? "00" : "30";
+  const ampm = hour < 12 ? "AM" : "PM";
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  return `${displayHour}:${min} ${ampm}`;
+});
+
 interface ReservationFormProps {
   date: Date;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: {
     date: string;
+    time?: string;
+    server?: string;
     customerName: string;
     phone: string;
     partySize: number;
@@ -39,6 +54,8 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [partySize, setPartySize] = useState("2");
+  const [time, setTime] = useState("");
+  const [server, setServer] = useState("");
   const [status, setStatus] = useState<"confirmed" | "waitlist">("confirmed");
   const [notes, setNotes] = useState("");
   const [initialized, setInitialized] = useState(false);
@@ -48,6 +65,8 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
     setCustomerName(editingReservation.customerName);
     setPhone(editingReservation.phone);
     setPartySize(String(editingReservation.partySize));
+    setTime(editingReservation.time || "");
+    setServer(editingReservation.server || "");
     setStatus(editingReservation.status);
     setNotes(editingReservation.notes);
     setInitialized(true);
@@ -61,6 +80,8 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
     setCustomerName("");
     setPhone("");
     setPartySize("2");
+    setTime("");
+    setServer("");
     setStatus("confirmed");
     setNotes("");
     setInitialized(false);
@@ -73,10 +94,15 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName.trim() || !phone.trim()) return;
+    if (!customerName.trim() || !phone.trim() || !server) {
+      alert("Please fill in all required fields, including assigning a Server.");
+      return;
+    }
 
     const ok = await onSubmit({
       date: format(date, "yyyy-MM-dd"),
+      time: time || undefined,
+      server: server || undefined,
       customerName: customerName.trim(),
       phone: phone.trim(),
       partySize: parseInt(partySize) || 2,
@@ -119,6 +145,34 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
             <div className="space-y-2">
               <Label htmlFor="partySize">Party Size</Label>
               <Input id="partySize" type="number" min="1" max="50" value={partySize} onChange={(e) => setPartySize(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Time</Label>
+              <Select value={time} onValueChange={setTime}>
+                <SelectTrigger id="time">
+                  <SelectValue placeholder="Select time..." />
+                </SelectTrigger>
+                <SelectContent className="max-h-[200px]">
+                  {TIME_SLOTS.map((t) => (
+                    <SelectItem key={t} value={t}>{t}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Server <span className="text-destructive">*</span></Label>
+              <Select value={server} onValueChange={setServer} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select server..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {SERVERS.map(s => (
+                    <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>Status</Label>

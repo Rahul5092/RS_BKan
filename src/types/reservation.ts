@@ -6,5 +6,7 @@ export interface Reservation {
   partySize: number;
   status: "confirmed" | "waitlist";
   notes: string;
+  time?: string;
+  server?: string;
   createdAt: string;
 }
