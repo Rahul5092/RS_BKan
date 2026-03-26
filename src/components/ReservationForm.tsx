@@ -94,8 +94,8 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName.trim() || !phone.trim() || !server) {
-      alert("Please fill in all required fields, including assigning a Server.");
+    if (!customerName.trim() || !phone.trim() || !partySize || !time || !server || !status || !notes.trim()) {
+      alert("Please fill in all required fields.");
       return;
     }
 
@@ -134,21 +134,21 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div className="space-y-2">
-            <Label htmlFor="name">Customer Name</Label>
+            <Label htmlFor="name">Customer Name <span className="text-destructive">*</span></Label>
             <Input id="name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="John Smith" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone">Phone Number <span className="text-destructive">*</span></Label>
             <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 123-4567" required />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="partySize">Party Size</Label>
-              <Input id="partySize" type="number" min="1" value={partySize} onChange={(e) => setPartySize(e.target.value)} />
+              <Label htmlFor="partySize">Party Size <span className="text-destructive">*</span></Label>
+              <Input id="partySize" type="number" min="1" value={partySize} onChange={(e) => setPartySize(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label>Time</Label>
-              <Select value={time} onValueChange={setTime}>
+              <Label>Time <span className="text-destructive">*</span></Label>
+              <Select value={time} onValueChange={setTime} required>
                 <SelectTrigger id="time">
                   <SelectValue placeholder="Select time..." />
                 </SelectTrigger>
@@ -175,8 +175,8 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Status</Label>
-              <Select value={status} onValueChange={(v) => setStatus(v as "confirmed" | "waitlist")}>
+              <Label>Status <span className="text-destructive">*</span></Label>
+              <Select value={status} onValueChange={(v) => setStatus(v as "confirmed" | "waitlist")} required>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -188,8 +188,8 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes & Comments</Label>
-            <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Allergies, special requests, seating preference..." rows={3} />
+            <Label htmlFor="notes">Notes & Comments <span className="text-destructive">*</span></Label>
+            <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Allergies, special requests, seating preference..." rows={3} required />
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>Cancel</Button>
