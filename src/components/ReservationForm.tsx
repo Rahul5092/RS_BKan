@@ -144,7 +144,7 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="partySize">Party Size</Label>
-              <Input id="partySize" type="number" min="1" max="50" value={partySize} onChange={(e) => setPartySize(e.target.value)} />
+              <Input id="partySize" type="number" min="1" value={partySize} onChange={(e) => setPartySize(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>Time</Label>
