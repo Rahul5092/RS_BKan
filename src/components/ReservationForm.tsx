@@ -94,7 +94,7 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName.trim() || !phone.trim() || !partySize || !time || !server || !status || !notes.trim()) {
+    if (!customerName.trim() || !phone.trim() || !partySize || !time || !server || !status) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -188,8 +188,8 @@ export function ReservationForm({ date, open, onOpenChange, onSubmit, editingRes
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes & Comments <span className="text-destructive">*</span></Label>
-            <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Allergies, special requests, seating preference..." rows={3} required />
+            <Label htmlFor="notes">Notes & Comments</Label>
+            <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Allergies, special requests, seating preference..." rows={3} />
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>Cancel</Button>
