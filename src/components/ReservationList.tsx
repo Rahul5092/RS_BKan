@@ -13,6 +13,11 @@ interface ReservationListProps {
   onToggleStatus: (id: string, status: "confirmed" | "waitlist") => void;
 }
 
+function parseLocalDate(dateString: string): Date {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export function ReservationList({ date, reservations, onDelete, onEdit, onToggleStatus }: ReservationListProps) {
   const sorted = [...reservations].sort((a, b) => {
     if (a.status === "confirmed" && b.status === "waitlist") return -1;
@@ -62,7 +67,7 @@ export function ReservationList({ date, reservations, onDelete, onEdit, onToggle
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-1">
-                    {r.date ? `Reservation date: ${format(new Date(r.date), "MMM d, yyyy")}` : "No date set"}
+                    {r.date ? `Reservation date: ${format(parseLocalDate(r.date), "MMM d, yyyy")}` : "No date set"}
                   </p>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
                     <span className="flex items-center gap-1">
